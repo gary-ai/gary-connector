@@ -27,8 +27,7 @@ def handle_command(command, channel):
                "* command with numbers, delimited by spaces."
     if command.startswith(EXAMPLE_COMMAND):
         response = "@jankov_d detected."
-    slack_client.api_call("chat.postMessage", channel=channel,
-                          text=response, as_user=True)
+    slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
 
 
 def parse_slack_output(slack_rtm_output):
