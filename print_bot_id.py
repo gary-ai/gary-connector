@@ -1,11 +1,8 @@
-#
-# nandotk 22/03/2017
-#
 
 import os
 from slackclient import SlackClient
 
-BOT_NAME = 'garybot'
+BOT_NAME = 'balssa_v'
 
 slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 
