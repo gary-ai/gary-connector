@@ -1,11 +1,12 @@
 import os
 import time
-from slackclient import SlackClient
-from bot_id_getter import bot_id_getter
 
-# get BOT_ID and SLACK_BOT_TOKEN as env variable
+from bot_id_getter import bot_id_getter
+from slackclient import SlackClient
+
+# get SLACK_BOT_ID and SLACK_BOT_TOKEN as env variable
 # min required is SLACK_BOT_TOKEN
-BOT_ID = os.environ.get("BOT_ID") if (os.environ.get("BOT_ID")) else bot_id_getter("garybot")
+BOT_ID = os.environ.get("SLACK_BOT_ID") if (os.environ.get("SLACK_BOT_ID")) else bot_id_getter("garybot")
 AT_BOT = "<@" + BOT_ID + ">"
 
 
@@ -32,11 +33,7 @@ def parse_slack_output(slack_rtm_output):
     if output_list and len(output_list) > 0:
         for output in output_list:
             if output and 'text' in output and AT_BOT in output['text']:
-                # return text after the @ mention, whitespace removed
-                print output['text'].split(AT_BOT)[1].strip().lower()
-                print output['channel']
-                return output['text'].split(AT_BOT)[1].strip().lower(), \
-                       output['channel']
+                return output['text'].encode("utf8"), output['channel']
     return None, None
 
 
