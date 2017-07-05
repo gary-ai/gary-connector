@@ -1,5 +1,6 @@
 import os
 import time
+import requests
 
 from bot_id_getter import bot_id_getter
 from slackclient import SlackClient
@@ -10,17 +11,19 @@ BOT_ID = os.environ.get("SLACK_BOT_ID") if (os.environ.get("SLACK_BOT_ID")) else
 AT_BOT = "<@" + BOT_ID + ">"
 
 
-# def handle_command(command, channel):
-#     """
-#         Receives commands directed at the bot and determines if they
-#         are valid commands. If so, then acts on the commands. If not,
-#         returns back what it needs for clarification.
-#     """
-#     response = "Not sure what you mean. Use the *" + EXAMPLE_COMMAND + \
-#                "* command with numbers, delimited by spaces."
-#     if command.startswith(EXAMPLE_COMMAND):
-#         response = "hi"
-#     slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
+def handle_command(command, channel):
+    """
+        Receives commands directed at the bot and determines if they
+        are valid commands. If so, then acts on the commands. If not,
+        returns back what it needs for clarification.
+    """
+    r = requests.get('http://nlp:5000/api/message/001/' + channel + '/' + command + '/').json()
+    print r['response']['message']
+    if r and 'response' in r and r['response']['message']:
+        response = r['response']['message']
+    else:
+        response = "request error"
+    slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
 
 
 def parse_slack_output(slack_rtm_output):
@@ -44,8 +47,8 @@ if __name__ == "__main__":
         print("garybot connected, ready to handle command!")
         while True:
             command, channel = parse_slack_output(slack_client.rtm_read())
-            # if command and channel:
-            # handle_command(command, channel)
+            if command and channel:
+                handle_command(command, channel)
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
         print("Connection failed. Invalid Slack token or bot ID?")
