@@ -18,8 +18,9 @@ def handle_command(command, channel):
         returns back what it needs for clarification.
     """
     r = requests.get('http://nlp:5000/api/message/001/' + channel + '/' + command + '/').json()
-    print r['response']['message']
     if r and 'response' in r and r['response']['message']:
+        # logs
+        print r['response']['message'].encode("utf8")
         response = r['response']['message']
     else:
         response = "request error"
