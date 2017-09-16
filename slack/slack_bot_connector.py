@@ -11,19 +11,18 @@ BOT_ID = os.environ.get("SLACK_BOT_ID") if (os.environ.get("SLACK_BOT_ID")) else
 AT_BOT = "<@" + BOT_ID + ">"
 
 
-def handle_command(command, channel):
+def handle_command(user_id, user_entry, user_chan):
     """
         Receives commands directed at the bot and determines if they
         are valid commands. If so, then acts on the commands. If not,
         returns back what it needs for clarification.
     """
-    r = requests.get('http://nlp:5000/api/message/001/' + channel + '/' + command + '/').json()
+    r = requests.get('http://nlp:5000/api/message/' + user_id + '/' + user_chan + '/' + user_entry + '/').json()
     if r and 'response' in r and r['response']['message']:
-        # logs
-        print r['response']['message'].encode("utf8")
+        print "chat_response: " + r['response']['message'].encode("utf8")
         response = r['response']['message']
     else:
-        response = "request error"
+        response = "Hum ... I can't access to natural language processing service. :robot:"
     slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
 
 
@@ -37,19 +36,20 @@ def parse_slack_output(slack_rtm_output):
     if output_list and len(output_list) > 0:
         for output in output_list:
             if output and 'text' in output and AT_BOT in output['text']:
-                return output['text'].encode("utf8"), output['channel']
-    return None, None
+                return output['user'], output['text'].encode("utf8"), output['channel']
+    return None, None, None
 
 
 if __name__ == "__main__":
     READ_WEBSOCKET_DELAY = 1
     slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
     if slack_client.rtm_connect():
-        print("garybot connected, ready to handle command!")
+        print("gary connected, ready to handle command!")
         while True:
-            command, channel = parse_slack_output(slack_client.rtm_read())
+            # rtm_read() read everything from websocket !
+            user_id, command, channel = parse_slack_output(slack_client.rtm_read())
             if command and channel:
-                handle_command(command, channel)
+                handle_command(user_id, command, channel)
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
         print("Connection failed. Invalid Slack token or bot ID?")
