@@ -1,5 +1,5 @@
 FROM debian:jessie
-MAINTAINER nandotk <victor@dekalee.fr>
+MAINTAINER victorbalssa <balssa_v@etna-alternance.net>
 
 RUN apt-get update \
     && apt-get upgrade -y \
