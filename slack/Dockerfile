@@ -1,16 +1,7 @@
-FROM debian:jessie
+FROM python:2.7
 MAINTAINER victorbalssa <balssa_v@etna-alternance.net>
-
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install -y \
-    python2.7 \
-    python-pip \
-    build-essential \
-    python-dev
 
 ADD ./requirements.txt /bot/requirements.txt
 WORKDIR /bot
-RUN pip install -r requirements.txt
-
-CMD /usr/bin/python2.7 slack_bot_connector.py
+RUN pip install --no-cache-dir -r requirements.txt
+CMD ["python", "./slack_bot_connector.py"]
