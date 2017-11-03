@@ -17,12 +17,14 @@ def handle_command(user_id, user_entry, user_chan):
         are valid commands. If so, then acts on the commands. If not,
         returns back what it needs for clarification.
     """
-    r = requests.get('http://nlp:5000/api/message/' + user_id + '/' + user_chan + '/' + user_entry + '/').json()
-    if r and 'response' in r and r['response']['message']:
-        print "chat_response: " + r['response']['message'].encode("utf8")
-        response = r['response']['message']
-    else:
-        response = "Hum ... I can't access to natural language processing service. :robot:"
+    response = "Hum ... I can't access to natural language processing service. :robot:"
+    try:
+        r = requests.get('http://nlp:5000/api/message/' + user_id + '/' + user_chan + '/' + user_entry + '/').json()
+        if r and 'response' in r and r['response']['message']:
+            print "chat_response: " + r['response']['message'].encode("utf8")
+            response = r['response']['message']
+    except ValueError:
+        print "chat_response: can't decode json from nlp api"
     slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
 
 
