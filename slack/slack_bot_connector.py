@@ -17,7 +17,7 @@ def handle_command(user_id, user_entry, user_chan):
         are valid commands. If so, then acts on the commands. If not,
         returns back what it needs for clarification.
     """
-    response = "Hum ... I can't access to natural language processing service. :robot:"
+    response = "Hum ... I can't access to natural language processing service. :robot_face:"
     try:
         r = requests.get('http://nlp:5000/api/message/' + user_id + '/' + user_chan + '/' + user_entry + '/').json()
         if r and 'response' in r and r['response']['message']:
@@ -43,7 +43,7 @@ def parse_slack_output(slack_rtm_output):
 
 
 if __name__ == "__main__":
-    READ_WEBSOCKET_DELAY = 1
+    READ_WEBSOCKET_DELAY = 2
     slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
     if slack_client.rtm_connect():
         print("gary connected, ready to handle command!")
